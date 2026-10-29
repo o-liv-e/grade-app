@@ -38,23 +38,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/grade-app:${{ github.sha }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/student-app:${{ github.sha }}
 
-    - name: Set up Kubeconfig
-      uses: azure/k8s-set-context@v3
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.KUBECONFIG }}
-
-    - name: Update Image Tag in Manifest
-      run: |
-        sed -i 's|DOCKERHUB_USERNAME/grade-app:IMAGE_TAG|${{ secrets.DOCKERHUB_USERNAME }}/grade-app:${{ github.sha }}|g' k8s/deployment.yaml
-
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/deployment.yaml
-        
     - name: Create local Kubernetes Cluster (Kind)
       uses: helm/kind-action@v1.10.0
       with:
@@ -68,4 +53,4 @@ jobs:
       run: |
         kubectl apply -f k8s/service.yaml
         kubectl apply -f k8s/deployment.yaml
-
+        kubectl rollout status deployment/student-app-deployment --timeout=60s
