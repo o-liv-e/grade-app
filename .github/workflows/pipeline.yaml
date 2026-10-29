@@ -38,7 +38,7 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/student-app:${{ github.sha }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/grade-app:${{ github.sha }}
 
     - name: Set up Kubeconfig
       uses: azure/k8s-set-context@v3
@@ -48,7 +48,7 @@ jobs:
 
     - name: Update Image Tag in Manifest
       run: |
-        sed -i 's|DOCKERHUB_USERNAME/student-app:IMAGE_TAG|${{ secrets.DOCKERHUB_USERNAME }}/student-app:${{ github.sha }}|g' k8s/deployment.yaml
+        sed -i 's|DOCKERHUB_USERNAME/grade-app:IMAGE_TAG|${{ secrets.DOCKERHUB_USERNAME }}/grade-app:${{ github.sha }}|g' k8s/deployment.yaml
 
     - name: Deploy to Kubernetes
       run: |

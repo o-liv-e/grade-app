@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: student-app-deployment
+  name: grade-app-deployment
   labels:
-    app: student-app
+    app: grade-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: student-app
+      app: grade-app
   template:
     metadata:
       labels:
-        app: student-app
+        app: grade-app
     spec:
       containers:
-      - name: student-app-container
-        image: DOCKERHUB_USERNAME/student-app:IMAGE_TAG
+      - name: grade-app-container
+        image: oliveprishita/grade-app:IMAGE_TAG
         ports:
         - containerPort: 5000
