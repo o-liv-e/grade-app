@@ -54,4 +54,4 @@ jobs:
       run: |
         kubectl apply -f k8s/service.yaml
         kubectl apply -f k8s/deployment.yaml
-        kubectl rollout status deployment/student-app-deployment --timeout=60s
+        kubectl rollout status deployment/grade-app-deployment --timeout=60s
