@@ -1,56 +1,21 @@
-name: Student App CI/CD Pipeline
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Run Automated Tests
-      run: |
-        pytest
-
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: |
-          oliveprishita/grade-app:${{ github.sha }}
-
-    - name: Create local Kubernetes Cluster (Kind)
-      uses: helm/kind-action@v1.10.0
-      with:
-        cluster_name: kind-cluster
-
-    - name: Update Image Tag in Manifest
-      run: |
-        sed -i 's|oliveprishita/grade-app:IMAGE_TAG|oliveprishita/grade-app:${{ github.sha }}|g' k8s/deployment.yaml
-
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/deployment.yaml
-        kubectl rollout status deployment/grade-app-deployment --timeout=60s
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grade-app-deployment
+  labels:
+    app: grade-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grade-app
+  template:
+    metadata:
+      labels:
+        app: grade-app
+    spec:
+      containers:
+      - name: grade-app-container
+        image: oliveprishita/grade-app:IMAGE_TAG
+        ports:
+        - containerPort: 5000
