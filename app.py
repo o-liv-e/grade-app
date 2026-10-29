@@ -13,9 +13,21 @@ def calculate():
     total = sum(marks)
     average = total / len(marks)
     
+    if average >= 90:
+        grade = 'A'
+    elif average >= 80:
+        grade = 'B'
+    elif average >= 70:
+        grade = 'C'
+    elif average >= 60:
+        grade = 'D'
+    else:
+        grade = 'F'
+    
     return jsonify({
         "total": total,
-        "average": average
+        "average": average,
+        "grade": grade
     })
 
 if __name__ == '__main__':
